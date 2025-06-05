@@ -25,16 +25,16 @@ logger = logging.getLogger(__name__)
 
 # Initialize Groq API Client
 client = Groq(
-    api_key=os.getenv("GROQ_API_KEY", "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"),
+    api_key=os.getenv("GROQ_API_KEY", ""),
 )
 
 # ElevenLabs API Key
-ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "sk_f9bf1a753b40db6ac4391ad23cb9ef2da74de885fd04081c")
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
 
 # Twilio API Credentials
-TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", "AC0c4f02d6fbb06fb8bc4c25a28cb58ed2")
-TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "7575ad84d043c784546541381ee5f72c")
-TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER", "+16812271336")
+TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", "")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "")
+TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER", "")
 
 # Initialize Twilio Client
 twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
@@ -173,17 +173,17 @@ def generate_response(text, language="en"):
         
         if language == "de":
             system_prompt = (
-                "Sie sind Dr. Schmidts Assistent, ein professioneller menschlicher Assistent, der für die Terminvereinbarung "
-                "für Dr. Schmidt zuständig ist. Sie sind kein KI-System. Ihre Aufgabe ist es, Patienten bei der Buchung von "
+                "Sie sind Dr. Schmidts Assistent, ein professioneller menschlicher Assistent, der fÃ¼r die Terminvereinbarung "
+                "fÃ¼r Dr. Schmidt zustÃ¤ndig ist. Sie sind kein KI-System. Ihre Aufgabe ist es, Patienten bei der Buchung von "
                 "Terminen basierend auf Dr. Schmidts Zeitplan zu helfen. Antworten Sie auf Deutsch und halten Sie die Antworten "
-                "kurz und professionell. Erwähnen Sie nicht, dass Sie eine KI sind.\n\n"
+                "kurz und professionell. ErwÃ¤hnen Sie nicht, dass Sie eine KI sind.\n\n"
                 "Dr. Schmidts Terminplan:\n"
                 "- Montag bis Freitag: 9:00-12:00 Uhr, 13:00-17:00 Uhr.\n"
                 "- Terminslots: Alle 30 Minuten (z.B. 9:00, 9:30, 10:00, etc.).\n"
-                "- Nicht verfügbar: Wochenenden, 12:00-13:00 Uhr (Mittagspause).\n\n"
+                "- Nicht verfÃ¼gbar: Wochenenden, 12:00-13:00 Uhr (Mittagspause).\n\n"
                 "Beispielantworten:\n"
-                "- \"Guten Tag, ich kann einen Termin für Sie vereinbaren. Wann möchten Sie Dr. Schmidt sehen?\"\n"
-                "- \"Welcher Tag und welche Uhrzeit würden Ihnen passen?\""
+                "- \"Guten Tag, ich kann einen Termin fÃ¼r Sie vereinbaren. Wann mÃ¶chten Sie Dr. Schmidt sehen?\"\n"
+                "- \"Welcher Tag und welche Uhrzeit wÃ¼rden Ihnen passen?\""
             )
         else:
             system_prompt = (
@@ -306,7 +306,7 @@ async def handle_voice_common():
     # Bilingual greeting
     gather.say(
         "Hello, welcome to Dr. Schmidt's appointment assistant. Please tell me when you would like to schedule your appointment. "
-        "Hallo, willkommen bei Dr. Schmidts Terminassistent. Bitte sagen Sie mir, wann Sie Ihren Termin vereinbaren möchten.",
+        "Hallo, willkommen bei Dr. Schmidts Terminassistent. Bitte sagen Sie mir, wann Sie Ihren Termin vereinbaren mÃ¶chten.",
         voice="alice",
         language="en-US"
     )
@@ -352,7 +352,7 @@ async def process_speech(request: Request):
     if speech_result:
         logger.info(f"Speech result received: {speech_result}")
         # Process text directly
-        detected_language = "de" if any(word in speech_result.lower() for word in ["termin", "ich", "möchte", "wann"]) else "en"
+        detected_language = "de" if any(word in speech_result.lower() for word in ["termin", "ich", "mÃ¶chte", "wann"]) else "en"
         response_text = await asyncio.to_thread(generate_response, speech_result, detected_language)
         response_audio_path = await text_to_speech(response_text, detected_language)
         
